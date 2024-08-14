@@ -1,0 +1,16 @@
+---
+import Layout from "../layouts/Layout.astro"
+---
+
+<Layout title="OpenQuizer - Log in">
+    <main class="flex w-full h-full justify-center items-center">
+        <form action="?" class="w-2/3 h-1/2 rounded-2xl bg-base-300 flex flex-col justify-center items-center gap-3">
+            <h1 class="text-2xl font-bold">Log In</h1>
+            <br />
+            <p class="flex justify-center items-center gap-2">Username: <input type="text" name="username" id="username" placeholder="cool_username" class="input w-3/5 max-w-3xl text-sm"></p>
+            <p class="flex justify-center items-center gap-2">Password: <input type="password" name="password" id="password" placeholder="Secure_password" class="input w-3/5 max-w-3xl text-sm"></p>
+            <br />
+            <p>Don't have an account yet? <a href="/signup" class="btn btn-accent btn-sm">Sign Up</a></p>
+        </form>
+    </main>
+</Layout>
