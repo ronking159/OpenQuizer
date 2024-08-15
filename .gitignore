@@ -24,4 +24,4 @@ pnpm-debug.log*
 .idea/
 
 # delevoloper database
-db/
+db/pb_data

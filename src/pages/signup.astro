@@ -3,13 +3,61 @@ import Layout from "../layouts/Layout.astro"
 ---
 
 <Layout title="OpenQuizer - Sign Up">
+    <script>
+        import PocketBase from 'pocketbase'
+        const pb = new PocketBase('http://127.0.0.1:8090')
+
+        const form = document?.getElementById('form') as HTMLFormElement
+        form?.addEventListener('submit', async e => {
+            e.preventDefault()
+            const errorElem = document.getElementById('error-message') as HTMLParagraphElement
+
+            const username = (document?.getElementById('username') as HTMLInputElement).value
+            const password = (document?.getElementById('password') as HTMLInputElement).value
+            const passwordConfirm = (document?.getElementById('passwordConfirm') as HTMLInputElement).value
+
+            if (password.length < 8) {
+                renderError('Password must be at least 8 characters long', errorElem)
+                return
+            }
+            if (password != passwordConfirm) {
+                renderError('Missmatching passwords', errorElem)
+                return
+            }
+
+            try {
+                console.log(`${username}, ${password}, ${passwordConfirm}`)
+
+                const record = await pb.collection('users').create({
+                    "username": username,
+                    "password": password,
+                    "passwordConfirm": passwordConfirm
+                })
+
+                location.replace('/login')
+            } catch(err) {
+                console.log(err)
+                renderError('Username taken', errorElem)
+            }
+        }, true)
+
+        function renderError(message: string, elem: HTMLParagraphElement | null) {
+            if (elem?.innerText != undefined) 
+                elem.innerText = message
+        }
+    </script>
+
     <main class="flex w-full h-full justify-center items-center">
-        <form action="?" class="w-2/3 h-1/2 rounded-2xl bg-base-300 flex flex-col justify-center items-center gap-3">
+        <noscript>Please enable JavaScript to use this website.</noscript>
+        <form action="?" id="form" class="w-2/3 h-1/2 rounded-2xl bg-base-300 flex flex-col justify-center items-center gap-3">
             <h1 class="text-2xl font-bold">Create an Account</h1>
             <br />
             <p class="flex justify-center items-center gap-2">Username: <input type="text" name="username" id="username" placeholder="cool_username" class="input w-3/5 max-w-3xl text-sm"></p>
             <p class="flex justify-center items-center gap-2">Password: <input type="password" name="password" id="password" placeholder="Secure_password" class="input w-3/5 max-w-3xl text-sm"></p>
-            <p class="max-sm:text-xs flex justify-center items-center gap-2">Verify Password: <input type="password" name="repassword" id="repassword" placeholder="Same_password" class="input w-3/5 max-w-3xl text-sm"></p>
+            <p class="max-sm:text-xs flex justify-center items-center gap-2">Verify Password: <input type="password" name="passwordConfirm" id="passwordConfirm" placeholder="Same_password" class="input w-3/5 max-w-3xl text-sm"></p>
+            <br />
+            <p id="error-message" class="text-red-600"></p>
+            <input type="submit" value="Create Account" class="btn btn-primary">
         </form>
     </main>
 </Layout>
