@@ -26,8 +26,6 @@ import Layout from "../layouts/Layout.astro"
             }
 
             try {
-                console.log(`${username}, ${password}, ${passwordConfirm}`)
-
                 const record = await pb.collection('users').create({
                     "username": username,
                     "password": password,

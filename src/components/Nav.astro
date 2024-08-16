@@ -1,5 +1,5 @@
 ---
-
+import UserButton from "./UserButton.svelte"
 ---
 
 <nav class="navbar bg-base-200 fixed">
@@ -13,6 +13,6 @@
         </ul>
     </div>
     <div class="navbar-end">
-        <a href="/login" class="btn btn-primary text-white">Log in</a>
+        <UserButton client:load></UserButton>
     </div>
 </nav>
