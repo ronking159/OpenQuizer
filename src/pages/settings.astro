@@ -1,0 +1,77 @@
+---
+import Layout from "../layouts/Layout.astro"
+---
+
+<Layout title="OpenQuizer - User Settings">
+    <script>
+        import PocketBase from 'pocketbase'
+        const pb = new PocketBase(import.meta.env.PUBLIC_POCKETBASE)
+
+        if (!pb.authStore.model) location.replace('/login')
+
+        document.getElementById('signout')?.addEventListener('click', () => {
+            pb.authStore.clear()
+            location.replace('/login')
+        })
+
+        document.getElementById('delete')?.addEventListener('click', async () => {
+            await pb.collection('users').delete(pb.authStore.model?.id)
+            location.replace('/login')
+        })
+
+        document.getElementById('changepassword')?.addEventListener('click', async () => {
+            const password = (document.getElementById('password') as HTMLInputElement).value
+            const passwordConfirm = (document.getElementById('passwordConfirm') as HTMLInputElement).value
+            const oldPassword = (document.getElementById('oldPassword') as HTMLInputElement).value
+
+            const errorElem = document.getElementById('error-message') as HTMLParagraphElement
+
+            if (password.length < 8) {
+                renderError('Password too short', errorElem)
+                return
+            }
+            if (password != passwordConfirm) {
+                renderError('Missmatching passwords', errorElem)
+                return
+            }
+
+            try {
+                await pb.collection('users').update(pb.authStore.model?.id, {
+                    oldPassword,
+                    password,
+                    passwordConfirm
+                })
+
+                pb.authStore.clear()
+                location.replace('/login')
+            } catch {
+                renderError('Something went wrong', errorElem)
+            }
+
+            function renderError(message: string, elem: HTMLParagraphElement | null) {
+                if (elem?.innerText != undefined) 
+                    elem.innerText = message
+            }
+        })
+    </script>
+
+    <main class="flex justify-center items-center">
+        <div class="w-4/5 h-4/5 flex flex-col items-center bg-base-300 rounded-2xl">
+            <h1 class="text-6xl max-sm:text-3xl mt-4">User settings</h1>
+            <div class="flex-auto"></div>
+            <div class="flex flex-col gap-2 items-center">
+                <h2>Change Password:</h2>
+                <input type="password" id="oldPassword" class="input" placeholder="Old Password">
+                <input type="password" id="password" class="input" placeholder="New Password">
+                <input type="password" id="passwordConfirm" class="input" placeholder="Confirm Password">
+                <p id="error-message" class="text-red-600"></p>
+                <button class="btn btn-warning" id="changepassword">Change Password</button>
+            </div>
+            <div class="flex-auto"></div>
+            <div class="m-6">
+                <button class="btn btn-error" id="signout">Sign Out</button>
+                <button class="btn btn-error" id="delete">Delete User</button>
+            </div>
+        </div>
+    </main>
+</Layout>
