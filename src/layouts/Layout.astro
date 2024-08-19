@@ -19,9 +19,15 @@ import Nav from '../components/Nav.astro';
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 	</head>
-	<body class="h-full">
+	<body class="h-full flex flex-col">
 		<Nav></Nav>
         <noscript>Please enable JavaScript to use this website.</noscript>
 		<slot />
 	</body>
 </html>
+
+<style is:global>
+	main {
+		flex: 1 1 auto;
+	}
+</style>
