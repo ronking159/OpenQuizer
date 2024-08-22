@@ -10,6 +10,43 @@ import Card from "../components/Card.astro"
 
         if (!pb.authStore.model) location.replace('/login')
 
+        // Fetching sets
+
+        interface SetCard {
+            id: string;
+            collectionId: string;
+            creator: string;
+            title: string;
+            description: string;
+            created: string;
+        }
+
+        const sets: SetCard[] = await pb.collection('sets').getFullList({
+            filter: `creator.id = "${pb.authStore.model?.id}"`,
+            sort: '-created'
+        })
+
+        const cardHTML = `<div class="card-body">
+      <h2 class="card-title"></h2>
+      <p></p>
+      <div class="card-actions justify-end">
+        <a class="btn btn-primary">View</a>
+      </div>
+    </div>`
+        sets.forEach(set => {
+            const el = document.createElement('div')
+
+            el.setAttribute('class', 'card bg-base-100 w-96 max-w-sm h-48 shadow-xl')
+            el.innerHTML = cardHTML;
+            (el.querySelector('h2') as HTMLHeadingElement).innerText = set.title;
+            (el.querySelector('p') as HTMLParagraphElement).innerText = set.description;
+            (el.querySelector('a') as HTMLAnchorElement).setAttribute('href', `/card/${set.id}`)
+
+            document.querySelector('main')?.append(el)
+        })
+
+        // UI JS
+
         const dialogBtn: HTMLButtonElement = document.getElementById('modal-btn') as HTMLButtonElement
         const createDialog: HTMLDialogElement = document.getElementById('create-dialog') as HTMLDialogElement
         dialogBtn.addEventListener('click', () => createDialog.showModal())
@@ -45,12 +82,6 @@ import Card from "../components/Card.astro"
     </script>
 
     <main class="flex flex-wrap justify-center h-0 m-4 gap-4 w-full">
-        <Card title="Example Title" description="This is a description"></Card>
-        <Card title="Example Title" description="This is a description"></Card>
-        <Card title="Example Title" description="This is a description"></Card>
-        <Card title="Example Title" description="This is a description"></Card>
-        <Card title="Example Title" description="This is a description"></Card>
-        <Card title="Example Title" description="This is a description"></Card>
         <button class="btn btn-secondary fixed left-3 bottom-3" id="modal-btn">Create</button>
         <dialog id="create-dialog" class="modal modal-bottom sm:modal-middle">
             <div class="modal-box">
