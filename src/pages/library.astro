@@ -4,6 +4,17 @@ import Card from "../components/Card.astro"
 ---
 
 <Layout title="OpenQuizer - My Library">
+    <script>
+        import PocketBase from 'pocketbase'
+        const pb = new PocketBase(import.meta.env.PUBLIC_POCKETBASE)
+        
+        if (!pb.authStore.model) location.replace('/login')
+
+        const createBtn: HTMLButtonElement = document.getElementById('modal-btn') as HTMLButtonElement
+        const createDialog: HTMLDialogElement = document.getElementById('create-dialog') as HTMLDialogElement
+        createBtn.addEventListener('click', () => createDialog.showModal())
+    </script>
+
     <main class="flex flex-wrap justify-center h-0 m-4 gap-4 w-full">
         <Card title="Example Title" description="This is a description"></Card>
         <Card title="Example Title" description="This is a description"></Card>
@@ -11,6 +22,20 @@ import Card from "../components/Card.astro"
         <Card title="Example Title" description="This is a description"></Card>
         <Card title="Example Title" description="This is a description"></Card>
         <Card title="Example Title" description="This is a description"></Card>
+        <button class="btn btn-secondary fixed left-3 bottom-3" id="modal-btn">Create</button>
+        <dialog id="create-dialog" class="modal modal-bottom sm:modal-middle">
+            <div class="modal-box">
+              <h3 class="text-lg font-bold">Create your set</h3>
+              <label class="label">Name: <input type="text" id="name" class="input input-bordered"></label>
+              <label class="label">Public: <input type="checkbox" class="toggle toggle-accent" checked="checked" /></label>
+              <div class="modal-action">
+                <form method="dialog">
+                  <button class="btn btn-primary">Create</button>
+                  <button class="btn">Close</button>
+                </form>
+              </div>
+            </div>
+        </dialog>
     </main>
 </Layout>
 
